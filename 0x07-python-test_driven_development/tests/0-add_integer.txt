@@ -28,6 +28,7 @@ Checking positive with negative:
 Checking negative with positive:
 	 >>> add_integer(-6, 8)
 	 2
+
 Checking addition over multiple values:
 	 >>> [add_integer(i, i ** 2) for i in range(6)]
 	 [0, 2, 6, 12, 20, 30]
@@ -71,6 +72,7 @@ Checking number with non-number:
 	 Traceback (most recent call last):
 	 ...
 	 TypeError: b must be an integer
+
 Checking non-number with non-number:
 	 >>> add_integer((2,), {"key": "value"})
          Traceback (most recent call last):

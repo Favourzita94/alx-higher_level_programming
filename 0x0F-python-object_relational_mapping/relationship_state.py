@@ -1,22 +1,18 @@
 #!/usr/bin/python3
-"""
-Defines class State
-"""
+'''task 15 db tables classes'''
 
-from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
-# from relationship_city import City
 
 Base = declarative_base()
 
 
 class State(Base):
-    """
-    Class State; instance of Base
-    Linked to MySQL table "states"
-    """
+    '''state class for the state table'''
     __tablename__ = "states"
-    id = Column(Integer, nullable=False, primary_key=True)
+    id = Column(Integer, primary_key=True, nullable=False,
+                autoincrement=True, unique=True)
     name = Column(String(128), nullable=False)
-    cities = relationship("City", backref="state")
+    cities = relationship('City', back_populates='state',
+                          cascade='all, delete, delete-orphan')

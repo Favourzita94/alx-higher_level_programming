@@ -1,35 +1,34 @@
 #!/usr/bin/python3
-"""
-create state "California" with city attribute "San Francisco"
-parameters given to script: username, password, database
-"""
+'''script for task 15'''
 
-from sys import argv
-from relationship_state import Base, State
+from relationship_state import State, Base
 from relationship_city import City
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import urllib
+import sys
 
-if __name__ == "__main__":
 
-    # make engine for database
-    user = argv[1]
-    passwd = urllib.parse.quote(argv[2])
-    db = argv[3]
-    engine = create_engine('mysql+mysqldb://{}:{}@localhost/{}'.
-                           format(user, passwd, db), pool_pre_ping=True)
-    Base.metadata.create_all(engine)
+if __name__ == '__main__':
+    username = sys.argv[1]
+    password = sys.argv[2]
+    db_name = sys.argv[3]
+    host = 'localhost'
+    port = '3306'
+
+    engine = create_engine('mysql+mysqldb://{}:{}@{}:{}/{}'.format(
+                           username, password, host, port, db_name
+                           ), pool_pre_ping=True)
     Session = sessionmaker(bind=engine)
-    session = Session()
+    Base.metadata.create_all(engine)
+    local_session = Session()
 
-    # create state "California" with city attribute "San Francisco"
-    new_s = State(name="California")
-    new_c = City(name="San Francisco")
-    new_s.cities.append(new_c)
+    new_state = State(name='California')
+    new_city = City(name='San Francisco')
+    new_state.cities.append(new_city)
 
-    session.add(new_s)
-    session.add(new_c)
+    local_session.add(new_state)
+    local_session.add(new_city)
+    local_session.commit()
 
-    session.commit()
-    session.close()
+    local_session.close()
+    engine.dispose()

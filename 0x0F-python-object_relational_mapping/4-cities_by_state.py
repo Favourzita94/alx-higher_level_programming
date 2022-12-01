@@ -1,24 +1,31 @@
 #!/usr/bin/python3
-"""Write a script that lists all cities from the database hbtn_0e_4_usa"""
+'''task 4 script'''
 
 import MySQLdb
-from sys import argv
+import sys
 
-if __name__ == "__main__":
-    """connect to database"""
-    connet = MySQLdb.connect(host="localhost",
-                             port=3306,
-                             user=argv[1],
-                             password=argv[2],
-                             database=argv[3])
-    """create cursor to execute queries using SQL"""
-    cursor = connet.cursor()
-    query = ("SELECT cities.id, cities.name, states.name FROM states \
-                INNER JOIN cities ON states.id = cities.state_id \
-                ORDER BY cities.id ASC")
-    cursor.execute(query)
-    records = cursor.fetchall()
-    for row in records:
-        print(row)
-    cursor.close()
-    connet.close()
+
+def list_all():
+    '''lists all cities from db'''
+    username = sys.argv[1]
+    password = sys.argv[2]
+    db_name = sys.argv[3]
+    host = 'localhost'
+    port = 3306
+
+    db = MySQLdb.connect(host=host, user=username, passwd=password,
+                         db=db_name, port=port)
+    cur = db.cursor()
+    cur.execute('SELECT c.id, c.name, s.name FROM cities c LEFT ' +
+                'JOIN states s ON c.state_id = s.id ORDER BY c.id ASC;')
+    result = cur.fetchall()
+    cur.close()
+    db.close()
+
+    if result:
+        for row in result:
+            print(row)
+
+
+if __name__ == '__main__':
+    list_all()

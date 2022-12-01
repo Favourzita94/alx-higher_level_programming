@@ -1,24 +1,31 @@
 #!/usr/bin/python3
-"""a script that lists all states with name
-starting with N from database hbtn_0e_0_usa"""
+'''script for task 1'''
 
 import MySQLdb
-from sys import argv
+import sys
+
+
+def list_N():
+    '''lists all states with a name that starts with N'''
+    username = sys.argv[1]
+    password = sys.argv[2]
+    db_name = sys.argv[3]
+    host = 'localhost'
+    port = 3306
+
+    db = MySQLdb.connect(host=host, user=username, passwd=password,
+                         db=db_name, port=port)
+    cur = db.cursor()
+    cur.execute('SELECT * FROM states WHERE name regexp "^N.*" ' +
+                'ORDER BY states.id ASC')
+    result = cur.fetchall()
+    cur.close()
+    db.close()
+    if result:
+        for row in result:
+            if row[1][0] == "N":
+                print(row)
+
 
 if __name__ == "__main__":
-    connet = MySQLdb.connect(host="localhost",
-                             port=3306,
-                             user=argv[1],
-                             password=argv[2],
-                             database=argv[3])
-
-    # create cursor to execute queries in SQL
-    cursor = connet.cursor()
-    query = "SELECT * FROM states WHERE name LIKE 'N%' ORDER BY id ASC"
-    cursor.execute(query)
-    records = cursor.fetchall()
-    for i in records:
-        if i[1][0] == 'N':
-            print(i)
-    cursor.close()
-    connet.close()
+    list_N()

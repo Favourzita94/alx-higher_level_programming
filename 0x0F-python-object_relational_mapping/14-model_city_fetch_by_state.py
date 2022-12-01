@@ -1,29 +1,31 @@
 #!/usr/bin/python3
-"""script that lists all State objects that contain
- the letter a from the database hbtn_0e_6_usa"""
+'''script for task 14'''
 
-from sys import argv
-from model_state import Base, State
+from model_state import State, Base
 from model_city import City
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import urllib
+import sys
 
-if __name__ == "__main__":
 
-    # make engine for database
-    user = argv[1]
-    password = urllib.parse.quote(argv[2])
-    db = argv[3]
-    engine = create_engine('mysql+mysqldb://{}:{}@localhost/{}'.
-                           format(user, password, db), pool_pre_ping=True)
+if __name__ == '__main__':
+    username = sys.argv[1]
+    password = sys.argv[2]
+    db_name = sys.argv[3]
+    host = 'localhost'
+    port = '3306'
+
+    engine = create_engine('mysql+mysqldb://{}:{}@{}:{}/{}'.format(
+                           username, password, host, port, db_name
+                           ), pool_pre_ping=True)
     Session = sessionmaker(bind=engine)
-    session = Session()
+    local_session = Session()
+    result = local_session.query(City, State).filter(
+                           City.state_id == State.id
+                           ).order_by(City.id).all()
 
-    # query python instances in database
-    city = session.query(State.name, City.id, City.name).filter(
-            State.id == City.state_id).order_by(City.id)
-    for i in city:
-        print("{:s}: ({:d}) {:s}".format(i[0], i[1], i[2]))
+    for row in result:
+        print('{}: ({}) {}'.format(row[1].name, row[0].id, row[0].name))
 
-    session.close()
+    local_session.close()
+    engine.dispose()
